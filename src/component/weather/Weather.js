@@ -6,19 +6,51 @@ import lang from '../languages/Languages';
 
 export default function Weather() {
   const [input, setInput] = useState('');
-  const URL = `api.openweathermap.org/data/2.5/`;
+  const [base, setBase] = useState({});
+  const URL = `https://api.openweathermap.org/data/2.5/`;
   const KEY = 'e1064eb0869d96015896f2221271df7a';
   const handleOnSubmit = (e) => {
     e.preventDefault();
     if (input !== '') {
       fetch(`${URL}weather?q=${input}&appid=${KEY}`)
-        .then((res) => res.json())
-        .then((data) => console.log(data))
+        .then((res) => {
+          return res.json();
+        })
+        .then(displayData)
         .catch((err) => console.log(err));
     } else {
       alert('please enter valid location');
     }
   };
+  function displayData(_data) {
+    setBase(_data);
+    console.log(_data);
+  }
+  const days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'April',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sept',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+
+  const displayDate = (d) => {
+    var date = new Date(d * 1000);
+    var day = date.getDate();
+    var month = months[date.getMonth()];
+    var year = date.getFullYear();
+
+    return day + '' + month + '' + year;
+  };
+
   return (
     <div className="weather">
       <div className="weather-container">
@@ -41,15 +73,25 @@ export default function Weather() {
           </form>
         </div>
         <div className="weather-current">
-          <h4></h4>
-          <small></small>
+          <h4>
+            {base.name}, {base.sys.country}
+          </h4>
+          <small>{displayDate(base.dt)}</small>
           <div className="weather-info">
             <div className="weather-icon">
-              <img src="" alt="" />
+              {/* <img
+                src={
+                  base?.weather &&
+                  `https://openweathermap
+              .org/img/wn/${base?.weather[0]?.icon}
+              @2x.png`
+                }
+                alt=""
+              /> */}
             </div>
             <div className="weather-temp">
               <p>
-                <sup>°c</sup>
+                <sup>{base.main.temp}°c</sup>
               </p>
               <small>
                 Real feel <span></span>
